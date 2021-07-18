@@ -350,11 +350,10 @@ fit_lin %>%
 #' Get predictions for holdout set ("test.csv").
 #+ preds-lin ----
 # Save these for potential exporting, after checking how good xgboost is
-preds_hold_lin <-
+probs_hold_lin <-
   fit_lin %>% 
-  predict(df_hold) %>% 
-  rename(accepted = .pred_class)
-preds_hold_lin
+  predict(df_hold, type = 'prob')
+probs_hold_lin
 
 #' Evaluate on validation set.
 #+ probs-tst-lin ----
@@ -504,7 +503,7 @@ probs_tst_xg %>%
 
 #' We could do some ensembling here. Perhaps the xgboost model captures some things that the penalized regression does not. However, I'm just about at the end of my time. Let's use the glmnet predictions.
 #+ export-pred
-write_csv(preds_hold_lin, file.path('preds.csv'))
+write_csv(probs_hold_lin, file.path('probs.csv'))
 
 
 

@@ -568,26 +568,25 @@ Get predictions for holdout set (“test.csv”).
 
 ``` r
 # Save these for potential exporting, after checking how good xgboost is
-preds_hold_lin <-
+probs_hold_lin <-
   fit_lin %>% 
-  predict(df_hold) %>% 
-  rename(accepted = .pred_class)
-preds_hold_lin
+  predict(df_hold, type = 'prob')
+probs_hold_lin
 ```
 
-    ## # A tibble: 1,000 x 1
-    ##    accepted
-    ##    <fct>   
-    ##  1 no      
-    ##  2 yes     
-    ##  3 yes     
-    ##  4 yes     
-    ##  5 no      
-    ##  6 yes     
-    ##  7 yes     
-    ##  8 yes     
-    ##  9 yes     
-    ## 10 no      
+    ## # A tibble: 1,000 x 2
+    ##    .pred_no .pred_yes
+    ##       <dbl>     <dbl>
+    ##  1    0.556     0.444
+    ##  2    0.373     0.627
+    ##  3    0.277     0.723
+    ##  4    0.338     0.662
+    ##  5    0.533     0.467
+    ##  6    0.446     0.554
+    ##  7    0.286     0.714
+    ##  8    0.347     0.653
+    ##  9    0.450     0.550
+    ## 10    0.510     0.490
     ## # ... with 990 more rows
 
 Evaluate on validation set.
@@ -700,13 +699,13 @@ wf_best_xg <- wf_xg %>% finalize_workflow(params_best_xg)
 fit_trn_xg <- wf_best_xg %>% fit(df_trn)
 ```
 
-    ## [12:16:33] WARNING: amalgamation/../src/learner.cc:1095: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'binary:logistic' was changed from 'error' to 'logloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+    ## [13:09:34] WARNING: amalgamation/../src/learner.cc:1095: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'binary:logistic' was changed from 'error' to 'logloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
 
 ``` r
 fit_xg <- wf_best_xg %>% fit(df)
 ```
 
-    ## [12:16:33] WARNING: amalgamation/../src/learner.cc:1095: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'binary:logistic' was changed from 'error' to 'logloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+    ## [13:09:35] WARNING: amalgamation/../src/learner.cc:1095: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'binary:logistic' was changed from 'error' to 'logloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
 
 Feature importances… we shouldn’t expect these to be the same as those
 from glmnet.
@@ -791,5 +790,5 @@ some things that the penalized regression does not. However, I’m just
 about at the end of my time. Let’s use the glmnet predictions.
 
 ``` r
-write_csv(preds_hold_lin, file.path('preds.csv'))
+write_csv(probs_hold_lin, file.path('probs.csv'))
 ```
